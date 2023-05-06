@@ -12,7 +12,12 @@ import ma.emsi.digitalbankbackend.exceptions.InsufficientBalanceException;
 import java.util.List;
 
 public interface BankAccountService {
-    Customer saveCustomer(Customer customer);
+    CustomerDTO saveCustomer(CustomerDTO customerDTO);
+
+    CustomerDTO updateCustomer(CustomerDTO customerDTO);
+
+    void deleteCustomer(Long id);
+
     CurrentAccount saveCurrentBankAccount(double initialBalance, double overDraft, Long customerId) throws CustomerNotFoundException;
     SavingAccount saveSavingBankAccount(double initialBalance, double interestRate, Long customerId) throws CustomerNotFoundException;
     List<CustomerDTO> listCustomers();
@@ -22,4 +27,6 @@ public interface BankAccountService {
     void transfert(String accountIdSource, String accountIdDestination, double amount) throws BankAccountNotFoundException, InsufficientBalanceException;
 
     List<BankAccount> bankAccountList();
+
+    CustomerDTO getCustomer(Long id) throws CustomerNotFoundException;
 }

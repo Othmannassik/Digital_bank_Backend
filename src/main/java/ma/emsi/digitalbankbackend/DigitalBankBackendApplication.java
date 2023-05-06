@@ -1,5 +1,6 @@
 package ma.emsi.digitalbankbackend;
 
+import ma.emsi.digitalbankbackend.dtos.CustomerDTO;
 import ma.emsi.digitalbankbackend.entities.*;
 import ma.emsi.digitalbankbackend.enums.AccountStatus;
 import ma.emsi.digitalbankbackend.enums.OperationType;
@@ -31,7 +32,7 @@ public class DigitalBankBackendApplication {
         return args -> {
             Stream.of("Othman","Hiba","Mouad")
                     .forEach(name->{
-                        Customer customer = new Customer();
+                        CustomerDTO customer = new CustomerDTO();
                         customer.setName(name);
                         customer.setEmail(name+"@gmail.com");
                         bankAccountService.saveCustomer(customer);

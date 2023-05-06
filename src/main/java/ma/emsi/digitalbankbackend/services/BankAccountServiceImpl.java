@@ -28,8 +28,22 @@ public class BankAccountServiceImpl implements BankAccountService {
     private AccountOperationRepository accountOperationRepository;
     private BankAccountMapperImpl bankAccountMapper;
     @Override
-    public Customer saveCustomer(Customer customer) {
-        return customerRepository.save(customer);
+    public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
+        Customer customer = bankAccountMapper.fromCustomerDTO(customerDTO);
+        customerRepository.save(customer);
+        return customerDTO;
+    }
+
+    @Override
+    public CustomerDTO updateCustomer(CustomerDTO customerDTO) {
+        Customer customer = bankAccountMapper.fromCustomerDTO(customerDTO);
+        customerRepository.save(customer);
+        return customerDTO;
+    }
+
+    @Override
+    public void deleteCustomer(Long id){
+        customerRepository.deleteById(id);
     }
 
     @Override
@@ -118,5 +132,12 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     public List<BankAccount> bankAccountList(){
         return bankAccountRepository.findAll();
+    }
+
+    @Override
+    public CustomerDTO getCustomer(Long id) throws CustomerNotFoundException {
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer Not Found"));
+        return bankAccountMapper.fromCustomer(customer);
     }
 }
