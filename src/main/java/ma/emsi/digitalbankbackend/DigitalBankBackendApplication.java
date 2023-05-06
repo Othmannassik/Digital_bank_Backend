@@ -1,14 +1,15 @@
 package ma.emsi.digitalbankbackend;
 
-import ma.emsi.digitalbankbackend.entities.AccountOperation;
-import ma.emsi.digitalbankbackend.entities.CurrentAccount;
-import ma.emsi.digitalbankbackend.entities.Customer;
-import ma.emsi.digitalbankbackend.entities.SavingAccount;
+import ma.emsi.digitalbankbackend.entities.*;
 import ma.emsi.digitalbankbackend.enums.AccountStatus;
 import ma.emsi.digitalbankbackend.enums.OperationType;
+import ma.emsi.digitalbankbackend.exceptions.BankAccountNotFoundException;
+import ma.emsi.digitalbankbackend.exceptions.CustomerNotFoundException;
+import ma.emsi.digitalbankbackend.exceptions.InsufficientBalanceException;
 import ma.emsi.digitalbankbackend.repositories.AccountOperationRepository;
 import ma.emsi.digitalbankbackend.repositories.BankAccountRepository;
 import ma.emsi.digitalbankbackend.repositories.CustomerRepository;
+import ma.emsi.digitalbankbackend.services.BankAccountService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,6 +27,35 @@ public class DigitalBankBackendApplication {
     }
 
     @Bean
+    CommandLineRunner commandLineRunner(BankAccountService bankAccountService){
+        return args -> {
+            Stream.of("Othman","Hiba","Mouad")
+                    .forEach(name->{
+                        Customer customer = new Customer();
+                        customer.setName(name);
+                        customer.setEmail(name+"@gmail.com");
+                        bankAccountService.saveCustomer(customer);
+                    });
+            bankAccountService.listCustomers().forEach(customer -> {
+                try {
+                    bankAccountService.saveCurrentBankAccount(Math.random()*80000,8000,customer.getId());
+                    bankAccountService.saveSavingBankAccount(Math.random()*120000,3.4,customer.getId());
+
+                    for (BankAccount bankAccount : bankAccountService.bankAccountList()){
+                        for (int i = 0; i < 5; i++) {
+                            bankAccountService.credit(bankAccount.getId(), 10000 + Math.random()*120000,"Credit");
+                            bankAccountService.debit(bankAccount.getId(), 1000 + Math.random()*9000,"Debit");
+                        }
+                    }
+                } catch (CustomerNotFoundException | BankAccountNotFoundException | InsufficientBalanceException e) {
+                    e.printStackTrace();
+                }
+            });
+        };
+    }
+
+
+    //@Bean
     CommandLineRunner start(CustomerRepository customerRepository,
                             BankAccountRepository bankAccountRepository,
                             AccountOperationRepository accountOperationRepository){

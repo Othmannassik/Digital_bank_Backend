@@ -2,6 +2,7 @@ package ma.emsi.digitalbankbackend.services;
 
 import lombok.AllArgsConstructor;
 import ma.emsi.digitalbankbackend.entities.*;
+import ma.emsi.digitalbankbackend.enums.AccountStatus;
 import ma.emsi.digitalbankbackend.enums.OperationType;
 import ma.emsi.digitalbankbackend.exceptions.BankAccountNotFoundException;
 import ma.emsi.digitalbankbackend.exceptions.CustomerNotFoundException;
@@ -38,6 +39,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         currentAccount.setId(UUID.randomUUID().toString());
         currentAccount.setBalance(initialBalance);
         currentAccount.setCreatedAt(new Date());
+        currentAccount.setStatus(Math.random()>0.5 ? AccountStatus.CREATED: AccountStatus.ACTIVATED);
         currentAccount.setCustomer(customer);
         currentAccount.setOverDraft(overDraft);
         return bankAccountRepository.save(currentAccount);
@@ -53,6 +55,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         savingAccount.setId(UUID.randomUUID().toString());
         savingAccount.setBalance(initialBalance);
         savingAccount.setCreatedAt(new Date());
+        savingAccount.setStatus(Math.random()>0.5 ? AccountStatus.CREATED: AccountStatus.ACTIVATED);
         savingAccount.setCustomer(customer);
         savingAccount.setInterestRate(interestRate);
         return bankAccountRepository.save(savingAccount);
@@ -104,5 +107,10 @@ public class BankAccountServiceImpl implements BankAccountService {
     public void transfert(String accountIdSource, String accountIdDestination, double amount) throws BankAccountNotFoundException, InsufficientBalanceException {
         debit(accountIdSource, amount, "Transfert To "+accountIdDestination);
         credit(accountIdDestination, amount, "Transfert From "+accountIdSource);
+    }
+
+    @Override
+    public List<BankAccount> bankAccountList(){
+        return bankAccountRepository.findAll();
     }
 }
