@@ -1,12 +1,14 @@
 package ma.emsi.digitalbankbackend.services;
 
 import lombok.AllArgsConstructor;
+import ma.emsi.digitalbankbackend.dtos.CustomerDTO;
 import ma.emsi.digitalbankbackend.entities.*;
 import ma.emsi.digitalbankbackend.enums.AccountStatus;
 import ma.emsi.digitalbankbackend.enums.OperationType;
 import ma.emsi.digitalbankbackend.exceptions.BankAccountNotFoundException;
 import ma.emsi.digitalbankbackend.exceptions.CustomerNotFoundException;
 import ma.emsi.digitalbankbackend.exceptions.InsufficientBalanceException;
+import ma.emsi.digitalbankbackend.mappers.BankAccountMapperImpl;
 import ma.emsi.digitalbankbackend.repositories.AccountOperationRepository;
 import ma.emsi.digitalbankbackend.repositories.BankAccountRepository;
 import ma.emsi.digitalbankbackend.repositories.CustomerRepository;
@@ -24,6 +26,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     private CustomerRepository customerRepository;
     private BankAccountRepository bankAccountRepository;
     private AccountOperationRepository accountOperationRepository;
+    private BankAccountMapperImpl bankAccountMapper;
     @Override
     public Customer saveCustomer(Customer customer) {
         return customerRepository.save(customer);
@@ -62,8 +65,11 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public List<Customer> listCustomers() {
-        return customerRepository.findAll();
+    public List<CustomerDTO> listCustomers() {
+        List<CustomerDTO> customerDTOS = customerRepository.findAll().stream()
+                .map(customer -> bankAccountMapper.fromCustomer(customer))
+                .toList();
+        return customerDTOS;
     }
 
     @Override
