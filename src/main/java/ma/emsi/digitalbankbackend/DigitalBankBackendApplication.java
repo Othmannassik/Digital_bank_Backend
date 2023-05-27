@@ -1,6 +1,9 @@
 package ma.emsi.digitalbankbackend;
 
+import ma.emsi.digitalbankbackend.dtos.BankAccountDTO;
+import ma.emsi.digitalbankbackend.dtos.CurrentBankAccountDTO;
 import ma.emsi.digitalbankbackend.dtos.CustomerDTO;
+import ma.emsi.digitalbankbackend.dtos.SavingBankAccountDTO;
 import ma.emsi.digitalbankbackend.entities.*;
 import ma.emsi.digitalbankbackend.enums.AccountStatus;
 import ma.emsi.digitalbankbackend.enums.OperationType;
@@ -42,10 +45,16 @@ public class DigitalBankBackendApplication {
                     bankAccountService.saveCurrentBankAccount(Math.random()*80000,8000,customer.getId());
                     bankAccountService.saveSavingBankAccount(Math.random()*120000,3.4,customer.getId());
 
-                    for (BankAccount bankAccount : bankAccountService.bankAccountList()){
+                    for (BankAccountDTO bankAccount : bankAccountService.bankAccountList()){
                         for (int i = 0; i < 5; i++) {
-                            bankAccountService.credit(bankAccount.getId(), 10000 + Math.random()*120000,"Credit");
-                            bankAccountService.debit(bankAccount.getId(), 1000 + Math.random()*9000,"Debit");
+                            String accountId;
+                            if (bankAccount instanceof SavingBankAccountDTO){
+                                accountId = ((SavingBankAccountDTO) bankAccount).getId();
+                            } else {
+                                accountId = ((CurrentBankAccountDTO) bankAccount).getId();
+                            }
+                            bankAccountService.credit(accountId, 10000 + Math.random()*120000,"Credit");
+                            bankAccountService.debit(accountId, 1000 + Math.random()*9000,"Debit");
                         }
                     }
                 } catch (CustomerNotFoundException | BankAccountNotFoundException | InsufficientBalanceException e) {
