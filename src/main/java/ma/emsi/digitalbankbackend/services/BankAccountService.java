@@ -1,9 +1,6 @@
 package ma.emsi.digitalbankbackend.services;
 
-import ma.emsi.digitalbankbackend.dtos.BankAccountDTO;
-import ma.emsi.digitalbankbackend.dtos.CurrentBankAccountDTO;
-import ma.emsi.digitalbankbackend.dtos.CustomerDTO;
-import ma.emsi.digitalbankbackend.dtos.SavingBankAccountDTO;
+import ma.emsi.digitalbankbackend.dtos.*;
 import ma.emsi.digitalbankbackend.entities.BankAccount;
 import ma.emsi.digitalbankbackend.entities.CurrentAccount;
 import ma.emsi.digitalbankbackend.entities.Customer;
@@ -32,4 +29,6 @@ public interface BankAccountService {
     List<BankAccountDTO> bankAccountList();
 
     CustomerDTO getCustomer(Long id) throws CustomerNotFoundException;
+
+    List<AccountOperationDTO> accountHistory(String accountId);
 }

@@ -1,10 +1,7 @@
 package ma.emsi.digitalbankbackend.services;
 
 import lombok.AllArgsConstructor;
-import ma.emsi.digitalbankbackend.dtos.BankAccountDTO;
-import ma.emsi.digitalbankbackend.dtos.CurrentBankAccountDTO;
-import ma.emsi.digitalbankbackend.dtos.CustomerDTO;
-import ma.emsi.digitalbankbackend.dtos.SavingBankAccountDTO;
+import ma.emsi.digitalbankbackend.dtos.*;
 import ma.emsi.digitalbankbackend.entities.*;
 import ma.emsi.digitalbankbackend.enums.AccountStatus;
 import ma.emsi.digitalbankbackend.enums.OperationType;
@@ -166,5 +163,13 @@ public class BankAccountServiceImpl implements BankAccountService {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer Not Found"));
         return bankAccountMapper.fromCustomer(customer);
+    }
+
+    @Override
+    public List<AccountOperationDTO> accountHistory(String accountId){
+        List<AccountOperation> accountOperations = accountOperationRepository.findByBankAccountId(accountId);
+        return accountOperations.stream()
+                .map(op -> bankAccountMapper.fromAccountOperation(op))
+                .toList();
     }
 }

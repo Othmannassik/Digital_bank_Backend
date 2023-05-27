@@ -1,6 +1,7 @@
 package ma.emsi.digitalbankbackend.web;
 
 import lombok.AllArgsConstructor;
+import ma.emsi.digitalbankbackend.dtos.AccountOperationDTO;
 import ma.emsi.digitalbankbackend.dtos.BankAccountDTO;
 import ma.emsi.digitalbankbackend.exceptions.BankAccountNotFoundException;
 import ma.emsi.digitalbankbackend.services.BankAccountService;
@@ -23,5 +24,10 @@ public class BankAccountRestController {
     @GetMapping("/accounts")
     public List<BankAccountDTO> listAccounts(){
         return bankAccountService.bankAccountList();
+    }
+
+    @GetMapping("/accounts/{accountId}/operation")
+    public List<AccountOperationDTO> getHistory(@PathVariable String accountId){
+        return bankAccountService.accountHistory(accountId);
     }
 }
